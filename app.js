@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -15,12 +16,23 @@ const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
-// this will set x-forwarded-proto req header properly when using 
-// heroku, due to proxies. This can be seen in the 
+// this will set x-forwarded-proto req header properly when using
+// heroku, due to proxies. This can be seen in the
 // createAndSendToken in authController
 app.enable('trust proxy');
 
 // Global middlewares
+
+// Using cors
+app.use(cors()); // this will add a few headers to the response
+
+// app.use(cors({
+//   origin: 'https://game-community-website.herokuapp.com'
+// }))
+
+// we need to enable non-simple requests such as put patch delete that trigger
+// a preflight, we need to respond to preflight with allow origin
+app.options('*', cors());
 
 // Set Security HTTP headers
 app.use(helmet());
