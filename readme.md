@@ -1,8 +1,8 @@
-# Natours Application
+# Game Community Website
 
-This was built using modern technologies: node.js, express, mongodb, mongoose.
+This backend application was built using modern technologies: node.js, express, mongodb, mongoose. Authentication and authorization is in place and security has been tackled during creation - such as XSS attacks, NoSQL injection, DoS attacks, and parameter pollution.
 
-# Trello Kanban board
+# Trello Kanban board (For both backend / front-end repositories)
 
 https://trello.com/b/H8WifmRt/gaming-community-website-kanban
 
