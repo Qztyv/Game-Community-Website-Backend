@@ -15,6 +15,11 @@ const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
+// this will set x-forwarded-proto req header properly when using 
+// heroku, due to proxies. This can be seen in the 
+// createAndSendToken in authController
+app.enable('trust proxy');
+
 // Global middlewares
 
 // Set Security HTTP headers
