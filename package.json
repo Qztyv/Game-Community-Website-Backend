@@ -4,7 +4,8 @@
   "description": "Attempt to learn mongodb and express",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "start:dev": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js",
     "debug:prod": "cross-env NODE_ENV=production ndb server.js"
