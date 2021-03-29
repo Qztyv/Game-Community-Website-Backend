@@ -6,7 +6,8 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please tell us your name']
+    required: [true, 'Please tell us your name'],
+    minlength: 4
   },
   email: {
     type: String,
@@ -33,7 +34,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please confirm your password'],
     validate: {
       // This only works on CREATE & SAVE, whenever we want to update a user,
-      // we must also therefore use save
+      // we must also therefore use save, otherwise validation is skipped.
       validator: function(el) {
         return el === this.password;
       },

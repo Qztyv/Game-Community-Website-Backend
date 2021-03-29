@@ -7,6 +7,7 @@ const router = express.Router();
 // In special cases, we can implement routes that do not follow the REST philosophy
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
+router.get('/logout', authController.logout); // end-user does not send data, they "get" an empty jwt cookie
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 

@@ -21,9 +21,12 @@ const createAndSendToken = (user, statusCode, req, res) => {
     ),
     // cookie cannot be accessed or modified in any way by the browser, preventing xss
     httpOnly: true,
-    // cookie is only sent on encrypted protocols, so https
-    // req.headers['x-forwarded-proto'] === 'https' is heroku specific
-    secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+    // cookie should only sent on encrypted protocols, so https
+    // heroku specific secure value
+    // uncomment for deployment
+    //secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+    secure: true,
+    sameSite: 'None' // need protection against csrf due to this property
   });
 
   // We want to remove password from the output
@@ -67,14 +70,33 @@ exports.login = catchAsync(async (req, res, next) => {
   createAndSendToken(user, 200, req, res);
 });
 
+// This endpoint is for cookie based authentication.
+// Users of cookie-based authentication cannot delete the cookie due to httpOnly option.
+// End-users that utilize token-based authentication can just delete the cookie from localstorage instead.
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'logoutUser', {
+    expires: new Date(Date.now() + 5 * 1000),
+    httpOnly: true,
+    // uncomment for production
+    //secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+    secure: true,
+    sameSite: 'None' // need protection against csrf due to this property
+  });
+  res.status(200).json({
+    status: 'success'
+  });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
-  // Get token and check if it exists
+  // Get token and check if it exists. Accepts either authorization header or cookie
   let token;
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   if (!token) {

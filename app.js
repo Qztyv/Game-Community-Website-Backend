@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -24,11 +25,15 @@ app.enable('trust proxy');
 // Global middlewares
 
 // Using cors
-app.use(cors()); // this will add a few headers to the response
+//app.use(cors()); // this will add a few headers to the response
 
-// app.use(cors({
-//   origin: 'https://game-community-website.herokuapp.com'
-// }))
+app.use(
+  cors({
+    //origin: 'https://game-community-website.herokuapp.com'
+    origin: 'https://localhost:8080',
+    credentials: true
+  })
+);
 
 // we need to enable non-simple requests such as put patch delete that trigger
 // a preflight, we need to respond to preflight with allow origin
@@ -59,6 +64,9 @@ app.use(
     limit: '10kb'
   })
 );
+
+// parse cookies coming in
+app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection.
 // mongoSanitize will check request body, query string and params, and filter characters
@@ -95,6 +103,7 @@ app.use(express.static(`${__dirname}/public`));
 // middleware just for testing stuff
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  console.log(req.cookies);
   next();
 });
 
