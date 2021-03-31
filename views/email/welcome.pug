@@ -1,0 +1,17 @@
+extends baseEmail 
+
+block content
+    p Hello there #{name}!,
+    p Welcome to the best Gaming Community platform out there!
+    p You are successfully signed up and ready to go now, please interact with other users via the post feed + following them!
+    table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+        tbody
+            tr
+                td(align='left')
+                    table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                        tbody
+                            tr
+                                td
+                                    a(href=`${url}`, target='_blank') Access your account settings here!
+    p We hope you enjoy your time on our site, have a great day!
+    p - Nicholas Cowling

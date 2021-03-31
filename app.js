@@ -29,8 +29,11 @@ app.enable('trust proxy');
 
 app.use(
   cors({
-    //origin: 'https://game-community-website.herokuapp.com'
-    origin: 'https://localhost:8080',
+    origin: [
+      'https://localhost:8080',
+      'https://127.0.0.1:8080',
+      'https://game-community-website.herokuapp.com'
+    ],
     credentials: true
   })
 );

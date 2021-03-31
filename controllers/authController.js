@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-const sendEmail = require('./../utils/email');
+const Email = require('./../utils/email');
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -48,7 +48,11 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm
   });
-
+  // set the url of the button (such as a link to the part of the website
+  // which allows you to set a photo, or maybe to make your first post)
+  //const url = `${req.protocol}://${req.get('host')}/settings`;
+  const url = `${req.get('origin')}/settings`;
+  await new Email(newUser, url).sendWelcome();
   createAndSendToken(newUser, 201, req, res);
 });
 
@@ -159,20 +163,20 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // Send token to users email (make a url for it and send it)
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
-
-  const message = `Forgot your password? submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email`;
-
+  // For a SPA, the frontend will be sending to our server endpoint url to trigger
+  // our endpoint. We want to attach the reset token to their origin url
+  // If there is no origin url, it came through an api call like postman
+  let resetURL;
+  if (req.get('origin')) {
+    resetURL = `${req.get('origin')}/reset-password/${resetToken}`;
+  } else {
+    resetURL = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+  }
   // We need to do more than simply send an error down to the client if the promise is rejected here
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 minutes)',
-      message
-    });
-
+    await new Email(user, resetURL).sendPasswordReset();
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email!'
