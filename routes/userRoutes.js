@@ -20,7 +20,7 @@ router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
 // Authorization required for all below
-router.use(authController.restrictTo('admin'));
+router.use(authController.restrictToRoles('admin'));
 
 router
   .route('/')

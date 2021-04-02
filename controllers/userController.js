@@ -2,16 +2,7 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
-
-const filterObj = (obj, ...allowedFields) => {
-  const newObj = {};
-  Object.keys(obj).forEach(el => {
-    if (allowedFields.includes(el)) {
-      newObj[el] = obj[el];
-    }
-  });
-  return newObj;
-};
+const { filterObjTakesElements } = require('./../utils/filterObj');
 
 exports.getMe = (req, res, next) => {
   // set req.params.id as factory.getOne uses that
@@ -30,7 +21,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
   // filter out unwanted field names not yet allowed to be updated / do not exist
-  const filteredBody = filterObj(req.body, 'name', 'email');
+  const filteredBody = filterObjTakesElements(req.body, 'name', 'email');
 
   // update the user document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {

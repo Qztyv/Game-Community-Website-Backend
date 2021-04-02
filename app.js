@@ -14,6 +14,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const postRouter = require('./routes/postRoutes');
 
 const app = express();
 
@@ -51,10 +52,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Limit requests from same API
-// we allow 100 requests by the same ip per hour
+// we allow 100000 requests by the same ip per hour
 const limiter = rateLimit({
   // adapt to max to the application depending on how it is used.
-  max: 100,
+  max: 100000,
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour...'
 });
@@ -106,7 +107,7 @@ app.use(express.static(`${__dirname}/public`));
 // middleware just for testing stuff
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.cookies);
+  // console.log(req.cookies.jwt);
   next();
 });
 
@@ -114,6 +115,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/posts', postRouter);
 
 // global error handling - includes handling errors such as /api/v1/rkrk
 app.all('*', (req, res, next) => {

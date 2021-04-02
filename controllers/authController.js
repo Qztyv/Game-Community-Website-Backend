@@ -22,10 +22,7 @@ const createAndSendToken = (user, statusCode, req, res) => {
     // cookie cannot be accessed or modified in any way by the browser, preventing xss
     httpOnly: true,
     // cookie should only sent on encrypted protocols, so https
-    // heroku specific secure value
-    // uncomment for deployment
-    //secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    secure: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     sameSite: 'None' // need protection against csrf due to this property
   });
 
@@ -81,9 +78,7 @@ exports.logout = (req, res) => {
   res.cookie('jwt', 'logoutUser', {
     expires: new Date(Date.now() + 5 * 1000),
     httpOnly: true,
-    // uncomment for production
-    //secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    secure: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     sameSite: 'None' // need protection against csrf due to this property
   });
   res.status(200).json({
@@ -132,13 +127,13 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   // Allow access to the protected route
-  req.user = currentUser; // We use this for authorization (restrictTo)
+  req.user = currentUser; // We use this for authorization (restrictToRoles)
   next();
 });
 
 // create a wrapper function so we can pass
 // an array of roles/arguments into middleware from the route. known as closure?
-exports.restrictTo = (...roles) => {
+exports.restrictToRoles = (...roles) => {
   return (req, res, next) => {
     // roles might be ['admin', 'lead-guide']
     if (!roles.includes(req.user.role)) {

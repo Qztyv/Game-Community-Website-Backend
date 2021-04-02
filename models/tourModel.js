@@ -73,7 +73,7 @@ const tourSchema = new mongoose.Schema(
     images: [String],
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
       // Can permanently hide properties internally at schema level,
       // better security for stuff like passwords and other sensitive data
       select: false

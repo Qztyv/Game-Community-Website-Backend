@@ -1,6 +1,7 @@
 const catchAsync = require('./../utils/catchAsync');
 const APIFeatures = require('./../utils/apiFeatures.js');
 const AppError = require('./../utils/appError');
+const { filterObjTakesArray } = require('../utils/filterObj');
 
 exports.deleteOne = Model =>
   catchAsync(async (req, res, next) => {
@@ -16,9 +17,14 @@ exports.deleteOne = Model =>
     });
   });
 
-exports.updateOne = Model =>
+exports.updateOne = (Model, ...allowedFields) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+    let filteredBody = { ...req.body };
+    if (allowedFields.length !== 0) {
+      filteredBody = filterObjTakesArray(req.body, allowedFields);
+    }
+
+    const doc = await Model.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true,
       runValidators: true
     });
@@ -35,9 +41,14 @@ exports.updateOne = Model =>
     });
   });
 
-exports.createOne = Model =>
+exports.createOne = (Model, ...allowedFields) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.create(req.body);
+    let filteredBody = { ...req.body };
+    if (allowedFields.length !== 0) {
+      filteredBody = filterObjTakesArray(req.body, allowedFields);
+    }
+
+    const doc = await Model.create(filteredBody);
 
     res.status(201).json({
       status: 'success',
