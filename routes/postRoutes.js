@@ -2,11 +2,13 @@ const express = require('express');
 const postController = require('./../controllers/postController');
 const authController = require('./../controllers/authController');
 const voteRouter = require('./../routes/voteRoutes');
+const commentRouter = require('./../routes/commentRoutes');
 
 const router = express.Router();
 
 // decoupled nesting
 router.use('/:postId/votes', voteRouter); // for better RESTful interactions, we allow nested requests
+router.use('/:postId/comments', commentRouter);
 
 router
   .route('/')
@@ -19,7 +21,7 @@ router
   )
   .post(
     authController.protect,
-    postController.setUserId,
+    postController.setUserId, // Need to re-set id as we are whitelisting the inputs to create a post in .createPost 2nd parameter
     postController.createPost
   );
 

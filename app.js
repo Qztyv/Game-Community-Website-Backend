@@ -16,6 +16,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const postRouter = require('./routes/postRoutes');
 const voteRouter = require('./routes/voteRoutes');
+const commentRouter = require('./routes/commentRoutes');
 
 const app = express();
 
@@ -118,6 +119,7 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/votes', voteRouter);
+app.use('/api/v1/comments', commentRouter);
 
 // global error handling - includes handling errors such as /api/v1/rkrk
 app.all('*', (req, res, next) => {
