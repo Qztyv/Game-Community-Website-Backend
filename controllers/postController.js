@@ -17,6 +17,7 @@ exports.restrictToOriginalOwner = catchAsync(async (req, res, next) => {
   if (!post) {
     return next(new AppError('No document found with that ID', 404));
   }
+
   if (post.user.id !== req.user.id && req.user.role !== 'admin') {
     return next(new AppError('You do not own this post', 401));
   }
@@ -24,10 +25,10 @@ exports.restrictToOriginalOwner = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.populateLikeByUser = (req, res, next) => {
+exports.populateVoteOfCurrentUser = (req, res, next) => {
   if (req.userId) {
     req.populateOptions = {
-      path: 'likeList',
+      path: 'voteList',
       match: { user: { $eq: req.userId } }
     };
   }

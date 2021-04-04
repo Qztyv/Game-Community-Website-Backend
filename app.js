@@ -15,8 +15,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const postRouter = require('./routes/postRoutes');
-const likeRouter = require('./routes/likeRoutes');
-const dislikeRouter = require('./routes/dislikeRoutes');
+const voteRouter = require('./routes/voteRoutes');
 
 const app = express();
 
@@ -118,8 +117,7 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/posts', postRouter);
-app.use('/api/v1/likes', likeRouter);
-app.use('/api/v1/dislikes', dislikeRouter);
+app.use('/api/v1/votes', voteRouter);
 
 // global error handling - includes handling errors such as /api/v1/rkrk
 app.all('*', (req, res, next) => {

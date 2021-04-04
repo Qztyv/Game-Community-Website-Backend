@@ -33,6 +33,14 @@ const postSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    totalVotes: {
+      type: Number,
+      default: 0
+    },
+    likePercentage: {
+      type: Number,
+      default: 0
+    },
     comments: {
       type: Number,
       default: 0
@@ -46,8 +54,8 @@ const postSchema = new mongoose.Schema(
 
 // virtual populate (solves the issue of parent referencing
 // where the parent has no access to the childs referencing it, post is parent, like is child)
-postSchema.virtual('likeList', {
-  ref: 'Like',
+postSchema.virtual('voteList', {
+  ref: 'Vote',
   foreignField: 'post',
   localField: '_id'
 });
