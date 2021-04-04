@@ -24,6 +24,15 @@ exports.restrictToOriginalOwner = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.populateLikeByUser = (req, res, next) => {
+  if (req.userId) {
+    req.populateOptions = {
+      path: 'likeList',
+      match: { user: { $eq: req.userId } }
+    };
+  }
+  next();
+};
 exports.getAllPosts = factory.getAll(Post);
 
 exports.getPost = factory.getOne(Post);

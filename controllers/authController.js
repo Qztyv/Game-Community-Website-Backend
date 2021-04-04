@@ -131,6 +131,28 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.getUserId = catchAsync(async (req, res, next) => {
+  // Get token and check if it exists. Accepts either authorization header or cookie
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  req.userId = decoded.id;
+  next();
+});
+
 // create a wrapper function so we can pass
 // an array of roles/arguments into middleware from the route. known as closure?
 exports.restrictToRoles = (...roles) => {

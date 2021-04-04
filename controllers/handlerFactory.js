@@ -64,6 +64,9 @@ exports.getOne = (Model, populateOptions) =>
     if (populateOptions) {
       query = query.populate(populateOptions);
     }
+    if (req.populateOptions) {
+      query = query.populate(req.populateOptions);
+    }
     const doc = await query;
 
     if (!doc) {
@@ -78,15 +81,22 @@ exports.getOne = (Model, populateOptions) =>
     });
   });
 
-exports.getAll = Model =>
+exports.getAll = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
-    // fixed the 'hack' that jonas said was ok to do, instead it is middleware
+    // req.filter is set in nested controllers, such as GETALL: posts/232321345w/likes. So rather than getting all likes,
+    // we get all likes from a specific post.
     const features = new APIFeatures(Model.find(req.filter), req.query)
       .filter()
       .sort()
       .limitFields()
       .paginate();
 
+    if (populateOptions) {
+      features.query = features.query.populate(populateOptions);
+    }
+    if (req.populateOptions) {
+      features.query = features.query.populate(req.populateOptions);
+    }
     //const doc = await features.query.explain();
 
     const doc = await features.query;

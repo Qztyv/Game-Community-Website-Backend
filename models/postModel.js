@@ -44,6 +44,14 @@ const postSchema = new mongoose.Schema(
   }
 );
 
+// virtual populate (solves the issue of parent referencing
+// where the parent has no access to the childs referencing it, post is parent, like is child)
+postSchema.virtual('likeList', {
+  ref: 'Like',
+  foreignField: 'post',
+  localField: '_id'
+});
+
 postSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'user',
