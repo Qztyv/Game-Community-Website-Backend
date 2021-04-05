@@ -11,7 +11,7 @@ exports.restrictToOriginalOwner = catchAsync(async (req, res, next) => {
   }
 
   // had to destrcture out the variables due to javascript object equality issues in conditional
-  console.log(comment);
+
   const users = {
     currentUser: req.user.id,
     userWhoMadeComment: comment.user._id.toString()

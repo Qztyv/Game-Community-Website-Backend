@@ -51,7 +51,9 @@ const postSchema = new mongoose.Schema(
     toObject: { virtuals: true }
   }
 );
-
+postSchema.index({ createdAt: -1 });
+postSchema.index({ likePercentage: -1 });
+postSchema.index({ likes: -1 });
 // virtual populate (solves the issue of parent referencing
 // where the parent has no access to the childs referencing it, post is parent, like is child)
 postSchema.virtual('voteList', {
