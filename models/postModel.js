@@ -20,6 +20,7 @@ const postSchema = new mongoose.Schema(
     },
     postContent: {
       type: String,
+      trim: true,
       maxlength: [
         3000,
         'The content of a post must not be longer than 3000 characters'
@@ -65,7 +66,7 @@ postSchema.virtual('voteList', {
 postSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'user',
-    select: '-__v -passwordChangedAt -passwordResetToken -passwordResetExpires'
+    select: '-__v -passwordChangedAt'
   });
   next();
 });
