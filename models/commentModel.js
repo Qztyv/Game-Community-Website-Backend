@@ -23,33 +23,46 @@ const commentSchema = new mongoose.Schema(
       required: [true, 'A comment must have some content'],
       minlength: [1, 'A comment must be atleast 1 character'],
       maxlength: [3000, 'A comment can have at most 3000 characters']
+    },
+    likes: {
+      type: Number,
+      default: 0
+    },
+    dislikes: {
+      type: Number,
+      default: 0
+    },
+    totalVotes: {
+      type: Number,
+      default: 0
+    },
+    likePercentage: {
+      type: Number,
+      default: 0
     }
-    // likes: {
-    //   type: Number,
-    //   default: 0
-    // },
-    // dislikes: {
-    //   type: Number,
-    //   default: 0
-    // },
-    // comments: {
-    //   type: Number,
-    //   default: 0
-    // }
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
   }
 );
-
 commentSchema.index({ post: 1, user: 1 }, { unique: false });
+commentSchema.index({ createdAt: -1 });
+commentSchema.index({ likePercentage: -1 });
+commentSchema.index({ likes: -1 });
+// virtual populate (solves the issue of parent referencing
+// where the parent has no access to the childs referencing it, post is parent, like is child)
+commentSchema.virtual('voteList', {
+  ref: 'CommentVote',
+  foreignField: 'comment',
+  localField: '_id'
+});
 
 // Query middleware
 commentSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'user',
-    select: 'name'
+    select: '-__v -email'
   });
   next();
 });

@@ -58,7 +58,7 @@ postSchema.index({ likes: -1 });
 // virtual populate (solves the issue of parent referencing
 // where the parent has no access to the childs referencing it, post is parent, like is child)
 postSchema.virtual('voteList', {
-  ref: 'Vote',
+  ref: 'PostVote',
   foreignField: 'post',
   localField: '_id'
 });
@@ -66,7 +66,7 @@ postSchema.virtual('voteList', {
 postSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'user',
-    select: '-__v -passwordChangedAt'
+    select: '-__v -email'
   });
   next();
 });

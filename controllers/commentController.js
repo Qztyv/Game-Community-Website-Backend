@@ -1,27 +1,5 @@
 const Comment = require('../models/commentModel');
 const factory = require('./handlerFactory');
-const AppError = require('./../utils/appError');
-const catchAsync = require('./../utils/catchAsync');
-
-exports.restrictToOriginalOwner = catchAsync(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
-
-  if (!comment) {
-    return next(new AppError('No document found with that ID', 404));
-  }
-
-  // had to destrcture out the variables due to javascript object equality issues in conditional
-
-  const users = {
-    currentUser: req.user.id,
-    userWhoMadeComment: comment.user._id.toString()
-  };
-
-  if (users.currentUser !== users.userWhoMadeComment) {
-    return next(new AppError('You do not own this comment', 401));
-  }
-  next();
-});
 
 exports.allowNestedRequests = (req, res, next) => {
   let filter = {};
@@ -44,12 +22,24 @@ exports.setPostAndUserIds = (req, res, next) => {
   next();
 };
 
+exports.populateVoteOfCurrentUser = (req, res, next) => {
+  if (req.userId) {
+    req.populateOptions = {
+      path: 'voteList',
+      match: { user: { $eq: req.userId } }
+    };
+  }
+  next();
+};
+
+exports.validateComment = factory.validateDocument(Comment);
+
 exports.getAllComments = factory.getAll(Comment);
 
 exports.getComment = factory.getOne(Comment);
 
-exports.createComment = factory.createOne(Comment);
+exports.createComment = factory.createOne(Comment, 'user', 'post', 'content');
 
-exports.updateComment = factory.updateOne(Comment);
+exports.updateComment = factory.updateOne(Comment, 'user', 'post', 'content');
 
 exports.deleteComment = factory.deleteOne(Comment);

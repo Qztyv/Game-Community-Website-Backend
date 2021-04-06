@@ -3,6 +3,32 @@ const APIFeatures = require('./../utils/apiFeatures.js');
 const AppError = require('./../utils/appError');
 const { filterObjTakesArray } = require('../utils/filterObj');
 
+// ensure user has permissions for the document
+exports.validateDocument = Model =>
+  catchAsync(async (req, res, next) => {
+    const document = await Model.findById(req.params.id);
+
+    if (!document) {
+      return next(new AppError('No document found with that ID', 404));
+    }
+
+    // had to destrcture out the variables due to javascript object equality issues in conditional
+    if (req.user.role !== 'admin' && !document.user) {
+      return next(
+        new AppError(
+          'The user associated with this document does not exist, and you do not have permission to modify it',
+          401
+        )
+      );
+    }
+
+    // let admins through if the user of the document does not exist and if it does exist.
+    if (req.user.role !== 'admin' && req.user.id !== document.user.id) {
+      return next(new AppError('You do not own this document', 401));
+    }
+    next();
+  });
+
 exports.deleteOne = Model =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
