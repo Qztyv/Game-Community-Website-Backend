@@ -19,18 +19,18 @@ router.get('/me', userController.getMe, userController.getUser);
 router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
-// Authorization required for all below
-router.use(authController.restrictToRoles('admin'));
+// Authorization required for all below, except getUser (for profile)
+//router.use(authController.restrictToRoles('admin'));
 
 router
   .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .get(authController.restrictToRoles('admin'), userController.getAllUsers)
+  .post(authController.restrictToRoles('admin'), userController.createUser);
 
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .patch(authController.restrictToRoles('admin'), userController.updateUser)
+  .delete(authController.restrictToRoles('admin'), userController.deleteUser);
 
 module.exports = router;
