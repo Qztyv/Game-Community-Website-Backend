@@ -88,9 +88,13 @@ exports.getOne = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
     let query = Model.findById(req.params.id);
     if (populateOptions) {
+      //this populate option is sent from the controller - it is ok for simple populates, but it does not have
+      // access to the req parameter
       query = query.populate(populateOptions);
     }
     if (req.populateOptions) {
+      // this branch has more flexibility since it can use req object.
+      // It is set in the middleware before this (can be seen in router, method called "populateVoteOfCurrentUser")
       query = query.populate(req.populateOptions);
     }
     const doc = await query;

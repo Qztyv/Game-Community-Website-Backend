@@ -53,8 +53,10 @@ const postSchema = new mongoose.Schema(
   }
 );
 postSchema.index({ createdAt: -1 });
-postSchema.index({ likePercentage: -1 });
-postSchema.index({ likes: -1 });
+postSchema.index({ createdAt: 1 });
+postSchema.index({ likePercentage: -1, likes: -1 });
+postSchema.index({ likes: -1, dislikes: 1 });
+
 // virtual populate (solves the issue of parent referencing
 // where the parent has no access to the childs referencing it, post is parent, like is child)
 postSchema.virtual('voteList', {
@@ -63,13 +65,14 @@ postSchema.virtual('voteList', {
   localField: '_id'
 });
 
-postSchema.pre(/^find/, function(next) {
-  this.populate({
-    path: 'user',
-    select: '-__v -email'
-  });
-  next();
-});
+// added premiddleware to postRoutes instead, as i didnt want users for every single time a post is grabbed (inefficient)
+// postSchema.pre(/^find/, function(next) {
+//   this.populate({
+//     path: 'user',
+//     select: '-__v -email'
+//   });
+//   next();
+// });
 
 const Post = mongoose.model('Post', postSchema);
 

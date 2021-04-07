@@ -48,8 +48,9 @@ const commentSchema = new mongoose.Schema(
 );
 commentSchema.index({ post: 1, user: 1 }, { unique: false });
 commentSchema.index({ createdAt: -1 });
-commentSchema.index({ likePercentage: -1 });
-commentSchema.index({ likes: -1 });
+commentSchema.index({ createdAt: 1 });
+commentSchema.index({ likePercentage: -1, likes: -1 });
+commentSchema.index({ likes: -1, dislikes: 1 });
 // virtual populate (solves the issue of parent referencing
 // where the parent has no access to the childs referencing it, post is parent, like is child)
 commentSchema.virtual('voteList', {

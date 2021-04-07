@@ -32,6 +32,18 @@ exports.populateVoteOfCurrentUser = (req, res, next) => {
   next();
 };
 
+// Dont want to populate posts for every comment EVERY time we do getAllComments, so
+// we add it as a pre-middleware and put it in the router that requires it
+exports.populatePostOfComment = (req, res, next) => {
+  if (req.params.id) {
+    req.populateOptions = {
+      path: 'post',
+      select: 'id postTitle'
+    };
+  }
+  next();
+};
+
 exports.validateComment = factory.validateDocument(Comment);
 
 exports.getAllComments = factory.getAll(Comment);
