@@ -2,16 +2,12 @@ const Post = require('./../models/postModel');
 const factory = require('./handlerFactory');
 const amazonS3 = require('./../utils/amazonS3');
 
-// We only allow 1 image upload for now on a post. Code is designed for array of images though
-exports.uploadPostImages = amazonS3.upload.array('images', 1);
+exports.uploadPostImage = amazonS3.upload.single('image');
 
-exports.insertPostImagesLinks = (req, res, next) => {
-  if (!req.files) {
-    return next();
+exports.insertPostImageLink = (req, res, next) => {
+  if (req.file) {
+    req.body.image = req.file.location;
   }
-  const images = [];
-  req.files.map(file => images.push(file.location));
-  req.body.images = images;
 
   next();
 };
@@ -47,6 +43,7 @@ exports.createPost = factory.createOne(
   Post,
   'postTitle',
   'postContent',
+  'image',
   'user'
 );
 
@@ -54,6 +51,7 @@ exports.updatePost = factory.updateOne(
   Post,
   'postTitle',
   'postContent',
+  'image',
   'user'
 );
 

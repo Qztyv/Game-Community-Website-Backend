@@ -69,6 +69,10 @@ exports.updateOne = (Model, ...allowedFields) =>
 
 exports.createOne = (Model, ...allowedFields) =>
   catchAsync(async (req, res, next) => {
+    // allowedFields is set in the controllers, such as in postController. This is to prevent
+    // users from setting the likes or other fields we do not wish to allow them to enter.
+    // req.body is all the data sent from the user, as well as data we may have set in middleware
+    // before this middleware is ran (can be seen in the router if this is the case)
     let filteredBody = { ...req.body };
     if (allowedFields.length !== 0) {
       filteredBody = filterObjTakesArray(req.body, allowedFields);

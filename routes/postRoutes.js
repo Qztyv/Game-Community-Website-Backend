@@ -21,9 +21,9 @@ router
   )
   .post(
     authController.protect,
-    postController.setUserId, // Need to re-set id if it came from cookie / bearer token and not req.body
-    postController.uploadPostImages,
-    postController.insertPostImagesLinks,
+    postController.uploadPostImage,
+    postController.insertPostImageLink,
+    postController.setUserId, // Need to re-set id if it came from cookie / bearer token and not req.body. Also, multer resets req.body, so its position matters
     postController.createPost
   );
 

@@ -30,30 +30,56 @@ router
     commentController.getAllComments
   );
 
-// Authentication required for all below
-router.use(authController.protect);
+// Authentication required for all below (except getUser (for profile))
+//router.use(authController.protect);
 
-router.patch('/updateMyPassword', authController.updatePassword);
-router.get('/me', userController.getMe, userController.getUser);
+router.patch(
+  '/updateMyPassword',
+  authController.protect,
+  authController.updatePassword
+);
+router.get(
+  '/me',
+  authController.protect,
+  userController.getMe,
+  userController.getUser
+);
 router.patch(
   '/updateMe',
+  authController.protect,
   userController.uploadUserPhoto,
   userController.updateMe
 );
-router.delete('/deleteMe', userController.deleteMe);
+router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 // Authorization required for all below, except getUser (for profile)
 //router.use(authController.restrictToRoles('admin'));
 
 router
   .route('/')
-  .get(authController.restrictToRoles('admin'), userController.getAllUsers)
-  .post(authController.restrictToRoles('admin'), userController.createUser);
+  .get(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.getAllUsers
+  )
+  .post(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.createUser
+  );
 
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(authController.restrictToRoles('admin'), userController.updateUser)
-  .delete(authController.restrictToRoles('admin'), userController.deleteUser);
+  .patch(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.updateUser
+  )
+  .delete(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.deleteUser
+  );
 
 module.exports = router;
