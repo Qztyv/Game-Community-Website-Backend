@@ -22,6 +22,8 @@ router
   .post(
     authController.protect,
     postController.setUserId, // Need to re-set id if it came from cookie / bearer token and not req.body
+    postController.uploadPostImages,
+    postController.insertPostImagesLinks,
     postController.createPost
   );
 

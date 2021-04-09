@@ -26,6 +26,7 @@ const postSchema = new mongoose.Schema(
         'The content of a post must not be longer than 3000 characters'
       ]
     },
+    images: String,
     likes: {
       type: Number,
       default: 0
