@@ -18,6 +18,8 @@ const postRouter = require('./routes/postRoutes');
 const postVoteRouter = require('./routes/postVoteRoutes');
 const commentRouter = require('./routes/commentRoutes');
 const commentVoteRouter = require('./routes/commentVoteRoutes');
+const followingRouter = require('./routes/followingRoutes');
+const followersRouter = require('./routes/followersRoutes');
 
 const app = express();
 
@@ -36,7 +38,7 @@ app.use(
     origin: [
       'https://localhost:8080',
       'https://127.0.0.1:8080',
-      'https://game-community-website.herokuapp.com'
+      'https://game-community-website.herokuapp.com' // change to the deployed frontend
     ],
     credentials: true
   })
@@ -122,6 +124,8 @@ app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/postVotes', postVoteRouter);
 app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/commentVotes', commentVoteRouter);
+app.use('/api/v1/following', followingRouter);
+app.use('/api/v1/followers', followersRouter);
 
 // global error handling - includes handling errors such as /api/v1/rkrk
 app.all('*', (req, res, next) => {

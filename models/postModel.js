@@ -65,14 +65,15 @@ postSchema.virtual('voteList', {
   localField: '_id'
 });
 
-// added premiddleware to postRoutes instead, as i didnt want users for every single time a post is grabbed (inefficient)
-// postSchema.pre(/^find/, function(next) {
-//   this.populate({
-//     path: 'user',
-//     select: '-__v -email'
-//   });
-//   next();
-// });
+// maybe comment out as it is inefficient for some calls. If users need populating,  it can be done via the second
+// parameter of handlerFactory getAll / GetOne, or alternatively you can add premiddleware to the Route.
+postSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: 'user',
+    select: '-__v -email'
+  });
+  next();
+});
 
 const Post = mongoose.model('Post', postSchema);
 

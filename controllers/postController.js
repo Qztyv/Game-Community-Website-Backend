@@ -21,15 +21,9 @@ exports.populateVoteOfCurrentUser = (req, res, next) => {
 
 exports.validatePost = factory.validateDocument(Post);
 
-exports.getAllPosts = factory.getAll(Post, {
-  path: 'user',
-  select: '-__v -email'
-});
+exports.getAllPosts = factory.getAll(Post);
 
-exports.getPost = factory.getOne(Post, {
-  path: 'user',
-  select: '-__v -email'
-});
+exports.getPost = factory.getOne(Post);
 
 // second parameter of create one and update one is optional. It allows us to filter for just the
 // inputs we want, stopping users from settings likes to 10000, or if it was a different model, it would

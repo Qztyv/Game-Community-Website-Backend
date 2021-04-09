@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
     select: false
+  },
+  following: {
+    type: Number,
+    default: 0
   }
 });
 

@@ -81,7 +81,6 @@ commentSchema.statics.incrementCommentCount = async function(postId) {
       }
     }
   ]);
-
   if (commentStats.length > 0) {
     await Post.findByIdAndUpdate(postId, {
       comments: commentStats[0].totalComments

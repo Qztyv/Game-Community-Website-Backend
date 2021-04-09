@@ -21,7 +21,7 @@ router
   )
   .post(
     authController.protect,
-    postController.setUserId, // Need to re-set id as we are whitelisting the inputs to create a post in .createPost 2nd parameter
+    postController.setUserId, // Need to re-set id if it came from cookie / bearer token and not req.body
     postController.createPost
   );
 

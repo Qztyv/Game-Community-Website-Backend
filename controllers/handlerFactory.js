@@ -3,7 +3,7 @@ const APIFeatures = require('./../utils/apiFeatures.js');
 const AppError = require('./../utils/appError');
 const { filterObjTakesArray } = require('../utils/filterObj');
 
-// ensure user has permissions for the document
+// ensure user has permissions for the document. bases validation off bearer token / cookie, not req.body.user
 exports.validateDocument = Model =>
   catchAsync(async (req, res, next) => {
     const document = await Model.findById(req.params.id);
