@@ -33,12 +33,14 @@ app.enable('trust proxy');
 // Using cors
 //app.use(cors()); // this will add a few headers to the response
 
+// Could make a deployed conditional here, so localhost requests arent
+// allowed on deployed server - would be more secure
 app.use(
   cors({
     origin: [
       'https://localhost:8080',
       'https://127.0.0.1:8080',
-      'https://game-community-website.herokuapp.com' // change to the deployed frontend
+      'https://game-community-website-frontend.netlify.app'
     ],
     credentials: true
   })
