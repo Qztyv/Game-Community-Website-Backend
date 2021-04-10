@@ -20,16 +20,26 @@ const postSchema = new mongoose.Schema(
     },
     postContent: {
       type: String,
+      trim: true,
       maxlength: [
         3000,
         'The content of a post must not be longer than 3000 characters'
       ]
     },
+    image: String,
     likes: {
       type: Number,
       default: 0
     },
     dislikes: {
+      type: Number,
+      default: 0
+    },
+    totalVotes: {
+      type: Number,
+      default: 0
+    },
+    likePercentage: {
       type: Number,
       default: 0
     },
@@ -43,11 +53,25 @@ const postSchema = new mongoose.Schema(
     toObject: { virtuals: true }
   }
 );
+postSchema.index({ createdAt: -1 });
+postSchema.index({ createdAt: 1 });
+postSchema.index({ likePercentage: -1, likes: -1 });
+postSchema.index({ likes: -1, dislikes: 1 });
 
+// virtual populate (solves the issue of parent referencing
+// where the parent has no access to the childs referencing it, post is parent, like is child)
+postSchema.virtual('voteList', {
+  ref: 'PostVote',
+  foreignField: 'post',
+  localField: '_id'
+});
+
+// maybe comment out as it is inefficient for some calls. If users need populating,  it can be done via the second
+// parameter of handlerFactory getAll / GetOne, or alternatively you can add premiddleware to the Route.
 postSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'user',
-    select: '-__v -passwordChangedAt -passwordResetToken -passwordResetExpires'
+    select: '-__v -email'
   });
   next();
 });

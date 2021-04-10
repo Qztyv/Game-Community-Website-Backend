@@ -11,7 +11,7 @@ const handleDuplicateFieldsDB = err => {
   const keyPair = err.keyValue;
   const key = Object.keys(keyPair)[0];
   const value = keyPair[Object.keys(keyPair)[0]];
-  const message = `The ${key}: ${value} has already been taken. Please enter another ${key}`;
+  const message = `The ${key}: ${value} already exists for this action.`;
   return new AppError(message, 400);
 };
 

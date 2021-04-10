@@ -76,7 +76,7 @@ exports.login = catchAsync(async (req, res, next) => {
 // End-users that utilize token-based authentication can just delete the cookie from localstorage instead.
 exports.logout = (req, res) => {
   res.cookie('jwt', 'logoutUser', {
-    expires: new Date(Date.now() + 5 * 1000),
+    expires: new Date(Date.now() + 1),
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     sameSite: 'None' // need protection against csrf due to this property
@@ -111,10 +111,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
     return next(
-      new AppError(
-        'The user belonging to this token does no longer exist.',
-        401
-      )
+      new AppError('The user belonging to this token no longer exists.', 401)
     );
   }
 
@@ -128,6 +125,28 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // Allow access to the protected route
   req.user = currentUser; // We use this for authorization (restrictToRoles)
+  next();
+});
+
+exports.getUserId = catchAsync(async (req, res, next) => {
+  // Get token and check if it exists. Accepts either authorization header or cookie
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  req.userId = decoded.id;
   next();
 });
 
@@ -211,8 +230,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
-
-  // Update changedPasswordAt property for the user
 
   // Log the user in, send JWT
   createAndSendToken(user, 200, req, res);

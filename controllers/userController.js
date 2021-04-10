@@ -3,6 +3,9 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
 const { filterObjTakesElements } = require('./../utils/filterObj');
+const amazonS3 = require('./../utils/amazonS3');
+
+exports.uploadUserPhoto = amazonS3.upload.single('photo');
 
 exports.getMe = (req, res, next) => {
   // set req.params.id as factory.getOne uses that
@@ -22,6 +25,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
   // filter out unwanted field names not yet allowed to be updated / do not exist
   const filteredBody = filterObjTakesElements(req.body, 'name', 'email');
+  if (req.file) {
+    filteredBody.photo = req.file.location;
+  }
 
   // update the user document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -61,3 +67,12 @@ exports.getUser = factory.getOne(User);
 exports.updateUser = factory.updateOne(User);
 
 exports.deleteUser = factory.deleteOne(User);
+
+exports.allowNestedRequests = (req, res, next) => {
+  let filter = {};
+  if (req.params.id) {
+    filter = { user: req.params.id };
+  }
+  req.filter = filter;
+  next();
+};

@@ -1,7 +1,16 @@
 const Post = require('./../models/postModel');
 const factory = require('./handlerFactory');
-const AppError = require('./../utils/appError');
-const catchAsync = require('./../utils/catchAsync');
+const amazonS3 = require('./../utils/amazonS3');
+
+exports.uploadPostImage = amazonS3.upload.single('image');
+
+exports.insertPostImageLink = (req, res, next) => {
+  if (req.file) {
+    req.body.image = req.file.location;
+  }
+
+  next();
+};
 
 exports.setUserId = (req, res, next) => {
   if (!req.body.user) {
@@ -11,27 +20,30 @@ exports.setUserId = (req, res, next) => {
   next();
 };
 
-exports.restrictToOriginalOwner = catchAsync(async (req, res, next) => {
-  const post = await Post.findById(req.params.id);
-
-  if (!post) {
-    return next(new AppError('No document found with that ID', 404));
+exports.populateVoteOfCurrentUser = (req, res, next) => {
+  if (req.userId) {
+    req.populateOptions = {
+      path: 'voteList',
+      match: { user: { $eq: req.userId } }
+    };
   }
-  if (post.user.id !== req.user.id && req.user.role !== 'admin') {
-    return next(new AppError('You do not own this post', 401));
-  }
-
   next();
-});
+};
+
+exports.validatePost = factory.validateDocument(Post);
 
 exports.getAllPosts = factory.getAll(Post);
 
 exports.getPost = factory.getOne(Post);
 
+// second parameter of create one and update one is optional. It allows us to filter for just the
+// inputs we want, stopping users from settings likes to 10000, or if it was a different model, it would
+// prevent the user from setting their role to admin for example.
 exports.createPost = factory.createOne(
   Post,
   'postTitle',
   'postContent',
+  'image',
   'user'
 );
 
@@ -39,6 +51,7 @@ exports.updatePost = factory.updateOne(
   Post,
   'postTitle',
   'postContent',
+  'image',
   'user'
 );
 

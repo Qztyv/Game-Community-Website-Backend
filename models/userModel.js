@@ -16,7 +16,11 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valid email']
   },
-  photo: String,
+  photo: {
+    type: String,
+    default:
+      'https://game-community-website-s3-bucket.s3.eu-west-2.amazonaws.com/default-user.png'
+  },
   role: {
     type: String,
     // Will have different names depending on the website - e.g community would have contributer or moderator
@@ -41,13 +45,26 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same!'
     }
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
+  passwordChangedAt: {
+    type: Date,
+    select: false
+  },
+  passwordResetToken: {
+    type: String,
+    select: false
+  },
+  passwordResetExpires: {
+    type: Date,
+    select: false
+  },
   active: {
     type: Boolean,
     default: true,
     select: false
+  },
+  following: {
+    type: Number,
+    default: 0
   }
 });
 

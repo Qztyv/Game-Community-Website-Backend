@@ -1,6 +1,8 @@
 const express = require('express');
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
+const postController = require('./../controllers/postController');
+const commentController = require('./../controllers/commentController');
 
 const router = express.Router();
 
@@ -11,26 +13,73 @@ router.get('/logout', authController.logout); // end-user does not send data, th
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
-// Authentication required for all below
-router.use(authController.protect);
+router.route('/:id/posts').get(
+  userController.allowNestedRequests,
+  authController.getUserId,
+  // to find out on the front end whether the logged in user has  already previously liked the post, we will populate the likeList
+  // with the match condition of the user id, so the array will be either empty (not liked), or contain 1 element (liked)
+  postController.populateVoteOfCurrentUser,
+  postController.getAllPosts
+);
 
-router.patch('/updateMyPassword', authController.updatePassword);
-router.get('/me', userController.getMe, userController.getUser);
-router.patch('/updateMe', userController.updateMe);
-router.delete('/deleteMe', userController.deleteMe);
+router
+  .route('/:id/comments')
+  .get(
+    userController.allowNestedRequests,
+    commentController.populatePostOfComment,
+    commentController.getAllComments
+  );
 
-// Authorization required for all below
-router.use(authController.restrictToRoles('admin'));
+// Authentication required for all below (except getUser (for profile))
+//router.use(authController.protect);
+
+router.patch(
+  '/updateMyPassword',
+  authController.protect,
+  authController.updatePassword
+);
+router.get(
+  '/me',
+  authController.protect,
+  userController.getMe,
+  userController.getUser
+);
+router.patch(
+  '/updateMe',
+  authController.protect,
+  userController.uploadUserPhoto,
+  userController.updateMe
+);
+router.delete('/deleteMe', authController.protect, userController.deleteMe);
+
+// Authorization required for all below, except getUser (for profile)
+//router.use(authController.restrictToRoles('admin'));
 
 router
   .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .get(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.getAllUsers
+  )
+  .post(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.createUser
+  );
 
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .patch(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.updateUser
+  )
+  .delete(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.deleteUser
+  );
 
 module.exports = router;
