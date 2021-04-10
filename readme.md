@@ -3,6 +3,7 @@
 This backend application was built using modern technologies: node.js, express, mongodb, mongoose. Authentication and authorization is in place and security has been tackled during creation - such as XSS attacks, NoSQL injection, DoS attacks, and parameter pollution.
 
 Front-end URL: https://game-community-website-frontend.netlify.app/
+
 Back-end URL: https://game-community-website-backend.herokuapp.com/
 
 NOTE: Heroku backend turns off after 30 minutes. So when making a request to the backend via the frontend (or by postman), it may say no response from the server
