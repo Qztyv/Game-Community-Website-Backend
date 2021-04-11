@@ -3,6 +3,8 @@ const factory = require('./handlerFactory');
 
 exports.allowNestedRequests = (req, res, next) => {
   let filter = {};
+  // if the postroute had posts/:postId/comments, we want to grab the postId. essentially this allows nested requests, so instead of getting ALL comments,
+  // we can get ALL comments ON a SPECIFIC post
   if (req.params.postId) {
     filter = { post: req.params.postId };
   }

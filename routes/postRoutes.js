@@ -11,6 +11,14 @@ router.use('/:postId/postVotes', postVoteRouter); // for better RESTful interact
 router.use('/:postId/comments', commentRouter);
 
 router
+  .route('/currentlyFollowing')
+  .get(
+    authController.protect,
+    postController.filterPostsByCurrentlyFollowing,
+    postController.getAllPosts
+  );
+
+router
   .route('/')
   .get(
     authController.getUserId,

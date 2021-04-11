@@ -24,13 +24,11 @@ router.route('/:id/posts').get(
   postController.getAllPosts
 );
 
-router
-  .route('/:id/comments')
-  .get(
-    userController.allowNestedRequests,
-    commentController.populatePostOfComment,
-    commentController.getAllComments
-  );
+router.route('/:id/comments').get(
+  userController.allowNestedRequests,
+  commentController.populatePostOfComment, // we populate the post so the result shows what the comment was on.
+  commentController.getAllComments
+);
 
 router
   .route('/:id/following')
