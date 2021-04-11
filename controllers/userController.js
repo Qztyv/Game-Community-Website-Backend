@@ -25,6 +25,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
   // filter out unwanted field names not yet allowed to be updated / do not exist
   const filteredBody = filterObjTakesElements(req.body, 'name', 'email');
+  // if multer detected a formdata post and it had a file, add the file location to our filteredBody so it can be added to the document
   if (req.file) {
     filteredBody.photo = req.file.location;
   }
@@ -70,6 +71,8 @@ exports.deleteUser = factory.deleteOne(User);
 
 exports.allowNestedRequests = (req, res, next) => {
   let filter = {};
+  // if the user entered users/:id/comments for example, we want to get the comments for that user.
+  // we do this by applying a filter in middleware before the get all comments
   if (req.params.id) {
     filter = { user: req.params.id };
   }

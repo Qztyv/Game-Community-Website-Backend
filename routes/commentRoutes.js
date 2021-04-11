@@ -13,8 +13,8 @@ router
   .get(
     commentController.allowNestedRequests,
     authController.getUserId,
-    // to find out on the front end whether the logged in user has  already previously liked the post, we will populate the likeList
-    // with the match condition of the user id, so the array will be either empty (not liked), or contain 1 element (liked)
+    // to find out on the front end whether the logged in user has  already previously liked the post, we will populate the voteList
+    // with the match condition of the user id, so the array will be either empty (never created collection), or contain 1 element (created a vote)
     commentController.populateVoteOfCurrentUser,
     commentController.getAllComments
   )
