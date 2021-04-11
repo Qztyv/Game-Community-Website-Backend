@@ -3,6 +3,8 @@ const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
 const postController = require('./../controllers/postController');
 const commentController = require('./../controllers/commentController');
+const followingController = require('./../controllers/followingController');
+const followersController = require('./../controllers/followersController');
 
 const router = express.Router();
 
@@ -29,6 +31,17 @@ router
     commentController.populatePostOfComment,
     commentController.getAllComments
   );
+
+router
+  .route('/:id/following')
+  .get(
+    userController.allowNestedRequests,
+    followingController.getAllFollowings
+  );
+
+router
+  .route('/:id/followers')
+  .get(userController.allowNestedRequests, followersController.getAllFollowers);
 
 // Authentication required for all below (except getUser (for profile))
 //router.use(authController.protect);
