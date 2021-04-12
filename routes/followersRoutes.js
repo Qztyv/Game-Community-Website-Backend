@@ -5,6 +5,10 @@ const authController = require('../controllers/authController');
 const router = express.Router();
 
 router
+  .route('/removeFollower/:userId')
+  .delete(authController.protect, followersControllers.removeUserFromFollowers);
+
+router
   .route('/')
   .get(followersControllers.getAllFollowers)
   .post(authController.protect, followersControllers.createFollowers);

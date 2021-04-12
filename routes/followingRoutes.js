@@ -4,6 +4,8 @@ const authController = require('./../controllers/authController');
 
 const router = express.Router();
 
+// Could add validateDocument handler to ensure that only the user associated with the document
+// is able to add / remove - more secure. This has been done with posts, comments, likes, dislikes.
 router
   .route('/addFollowing/:userId')
   .patch(authController.protect, followingController.addUserToFollowing);
