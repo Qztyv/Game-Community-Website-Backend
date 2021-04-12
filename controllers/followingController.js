@@ -56,6 +56,8 @@ exports.addUserToFollowing = catchAsync(async (req, res, next) => {
   try {
     updatedFollowers = await AddElementToFollowersArray(req);
   } catch (err) {
+    // Like with following, if the collection has not been created before we get an initial error that we want to ignore
+    // and retry (upsert creates the document for us)
     if (err.message === "Cannot read property 'constructor' of null") {
       updatedFollowers = await AddElementToFollowersArray(req);
     } else {
@@ -84,7 +86,7 @@ exports.removeUserFromFollowing = catchAsync(async (req, res, next) => {
   // keep followers in sync with following
   await Followers.findOneAndUpdate(
     { user: req.params.userId },
-    { $pull: { followers: req.user.id } } // addToSet ensures we dont add the same user multiple times
+    { $pull: { followers: req.user.id } }
   );
   res.status(204).json({
     status: 'success',
