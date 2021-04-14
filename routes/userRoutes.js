@@ -93,4 +93,20 @@ router
     userController.deleteUser
   );
 
+router
+  .route('/:id/ban')
+  .patch(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.banUser
+  );
+
+router
+  .route('/:id/unban')
+  .patch(
+    authController.protect,
+    authController.restrictToRoles('admin'),
+    userController.unbanUser
+  );
+
 module.exports = router;

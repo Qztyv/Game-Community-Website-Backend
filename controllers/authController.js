@@ -67,6 +67,10 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
+
+  if (user.banned === true) {
+    return next(new AppError(`You are banned. Reason: ${user.banReason}`, 403));
+  }
   // If everything is ok, send token to client
   createAndSendToken(user, 200, req, res);
 });
@@ -123,6 +127,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
+  if (currentUser.banned === true) {
+    return next(
+      new AppError(`You are banned. Reason: ${currentUser.banReason}`, 403)
+    );
+  }
   // Allow access to the protected route
   req.user = currentUser; // We use this for authorization (restrictToRoles)
   next();
