@@ -69,6 +69,48 @@ exports.updateUser = factory.updateOne(User);
 
 exports.deleteUser = factory.deleteOne(User);
 
+exports.banUser = catchAsync(async (req, res, next) => {
+  const bannedUser = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      banned: true,
+      banReason: req.body.banReason
+    },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: bannedUser
+    }
+  });
+});
+
+exports.unbanUser = catchAsync(async (req, res, next) => {
+  const unbannedUser = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      banned: false,
+      banReason: ''
+    },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: unbannedUser
+    }
+  });
+});
+
 exports.allowNestedRequests = (req, res, next) => {
   let filter = {};
   // if the user entered users/:id/comments for example, we want to get the comments for that user.
