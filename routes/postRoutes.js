@@ -10,13 +10,13 @@ const router = express.Router();
 router.use('/:postId/postVotes', postVoteRouter); // for better RESTful interactions, we allow nested requests
 router.use('/:postId/comments', commentRouter);
 
-router
-  .route('/currentlyFollowing')
-  .get(
-    authController.protect,
-    postController.filterPostsByCurrentlyFollowing,
-    postController.getAllPosts
-  );
+router.route('/currentlyFollowing').get(
+  authController.protect,
+  postController.filterPostsByCurrentlyFollowing,
+  authController.getUserId, // could refactor this out,  as we already have the userId from protect. Would require altering populateVoteOfCurrentUser
+  postController.populateVoteOfCurrentUser,
+  postController.getAllPosts
+);
 
 router
   .route('/')
