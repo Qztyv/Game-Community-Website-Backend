@@ -37,33 +37,9 @@ exports.addUserToFollowing = catchAsync(async (req, res, next) => {
   if (req.user.id === req.params.userId) {
     return next(new AppError('You cannot follow yourself', 401));
   }
-  let updatedFollowing;
-  try {
-    updatedFollowing = await AddElementToFollowingArray(req);
-  } catch (err) {
-    // If the following document does not exist yet, upsert creates it. However, we get an error as the middleware
-    // in the route was unable to execute correctly due to the document being null at the time. If this is the error
-    // we get, we want to re-execute the query just to increment the like on the user & ensure everything is in sync
-    // This overall makes the API easier to understand on front-end since they dont have to create a collection before adding a follow to a collection
-    if (err.message === "Cannot read property 'constructor' of null") {
-      updatedFollowing = await AddElementToFollowingArray(req);
-    } else {
-      throw err;
-    }
-  }
+  const updatedFollowing = await AddElementToFollowingArray(req);
   // keep followers in sync with following
-  let updatedFollowers;
-  try {
-    updatedFollowers = await AddElementToFollowersArray(req);
-  } catch (err) {
-    // Like with following, if the collection has not been created before we get an initial error that we want to ignore
-    // and retry (upsert creates the document for us)
-    if (err.message === "Cannot read property 'constructor' of null") {
-      updatedFollowers = await AddElementToFollowersArray(req);
-    } else {
-      throw err;
-    }
-  }
+  const updatedFollowers = await AddElementToFollowersArray(req);
 
   res.status(200).json({
     status: 'success',
