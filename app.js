@@ -11,9 +11,7 @@ const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
-const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
-const reviewRouter = require('./routes/reviewRoutes');
 const postRouter = require('./routes/postRoutes');
 const postVoteRouter = require('./routes/postVoteRoutes');
 const commentRouter = require('./routes/commentRoutes');
@@ -93,35 +91,17 @@ app.use(mongoSanitize());
 // This should protect from xss atleast on server-side
 app.use(xss());
 
-// Preventing parameter pollution - we whitelist parameters we allow duplicates of
-app.use(
-  hpp({
-    // as the application grows, it might be better getting fieldnames
-    // from the models
-    whitelist: [
-      'duration',
-      'ratingsAverage',
-      'ratingsQuantity',
-      'maxGroupSize',
-      'difficulty',
-      'price'
-    ]
-  })
-);
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
+// Preventing parameter pollution - we could whitelist parameters we allow duplicates of, if needed.
+app.use(hpp());
 
 // middleware just for testing stuff
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  // console.log(req.cookies.jwt);
   next();
 });
 
 // mount routes, they essentially become middleware
-app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
-app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/postVotes', postVoteRouter);
 app.use('/api/v1/comments', commentRouter);
