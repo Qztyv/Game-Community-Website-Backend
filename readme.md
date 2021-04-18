@@ -4,7 +4,7 @@ This backend application was built using modern technologies: node.js, express, 
 
 Front-end URL: https://game-community-website-frontend.netlify.app/
 
-Back-end URL: https://game-community-website-backend.herokuapp.com/
+Back-end URL: https://api-game-community-website.herokuapp.com/api/v1/
 
 NOTE: Heroku backend turns off after 30 minutes. So when making a request to the backend via the frontend (or by postman), it may say no response from the server
 as the server is turning on. Try making a request again and it should start working.
@@ -86,7 +86,7 @@ https://trello.com/b/H8WifmRt/gaming-community-website-kanban
     	1. run "npm install"
     	2. Ensure you select the right baseURL in axios.
     		you can use the localhost backend URL: "http://127.0.0.1:3000/api/v1/" (after setting up),
-    		or you could use the deployed backend URL: "https://game-community-website-backend.herokuapp.com/api/v1/".
+    		or you could use the deployed backend URL: "https://api-game-community-website.herokuapp.com/api/v1/".
     			If you will be editing the backend too, or want to see more detailed errors, or do not want real emails sending out every time,
     			use localhost.
     	3. run "npm run serve:secure".
