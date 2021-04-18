@@ -4,6 +4,7 @@ const factory = require('./handlerFactory');
 const amazonS3 = require('./../utils/amazonS3');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const regexUtils = require('./../utils/regexUtils');
 
 // used in postrouter before post create middleware
 exports.uploadPostImage = amazonS3.upload.single('image');
@@ -52,6 +53,17 @@ exports.filterPostsByCurrentlyFollowing = catchAsync(async (req, res, next) => {
     }
     filter = { user: { $in: doc.following } };
   }
+  req.filter = filter;
+  next();
+});
+
+exports.filterPostsBySearchTermOnTitle = catchAsync(async (req, res, next) => {
+  const filter = {
+    postTitle: {
+      $regex: regexUtils.escapeRegExp(req.params.titleSearchTerm),
+      $options: 'i'
+    }
+  };
   req.filter = filter;
   next();
 });

@@ -18,6 +18,13 @@ router.route('/currentlyFollowing').get(
   postController.getAllPosts
 );
 
+router.route('/searchByTitle/:titleSearchTerm').get(
+  postController.filterPostsBySearchTermOnTitle,
+  authController.getUserId, // if they are logged in, we want a user id to check if they already voted on post
+  postController.populateVoteOfCurrentUser,
+  postController.getAllPosts
+);
+
 router
   .route('/')
   .get(
