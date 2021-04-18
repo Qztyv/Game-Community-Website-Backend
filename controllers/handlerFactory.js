@@ -117,8 +117,8 @@ exports.getOne = (Model, populateOptions) =>
 
 exports.getAll = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
-    // req.filter is set in nested controllers, such as GETALL: posts/232321345w/likes. So rather than getting all likes,
-    // we get all likes from a specific post.
+    // req.filter is set in nested controllers, such as GETALL: posts/232321345w/postVotes. So rather than getting all likes,
+    // we get all votes from a specific post.
     const features = new APIFeatures(Model.find(req.filter), req.query)
       .filter()
       .sort()

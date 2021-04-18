@@ -4,6 +4,7 @@ const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
 const { filterObjTakesElements } = require('./../utils/filterObj');
 const amazonS3 = require('./../utils/amazonS3');
+const regexUtils = require('./../utils/regexUtils');
 
 exports.uploadUserPhoto = amazonS3.upload.single('photo');
 
@@ -59,6 +60,17 @@ exports.createUser = (req, res) => {
     message: 'This route is not defined. Please use /signup instead'
   });
 };
+
+exports.filterUsersBySearchTermOnName = catchAsync(async (req, res, next) => {
+  const filter = {
+    name: {
+      $regex: regexUtils.escapeRegExp(req.params.nameSearchTerm),
+      $options: 'i'
+    }
+  };
+  req.filter = filter;
+  next();
+});
 
 exports.getAllUsers = factory.getAll(User);
 

@@ -63,8 +63,15 @@ router.patch(
 );
 router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
-// Authorization required for all below, except getUser (for profile)
+// Authorization required for all below, except getUser (for profile), and searchTerm.
 //router.use(authController.restrictToRoles('admin'));
+
+router
+  .route('/searchByName/:nameSearchTerm')
+  .get(
+    userController.filterUsersBySearchTermOnName,
+    userController.getAllUsers
+  );
 
 router
   .route('/')

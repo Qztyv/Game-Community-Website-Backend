@@ -18,7 +18,8 @@ const multerStorage = multerS3({
   key: (req, file, cb) => {
     const name = file.originalname.split('.')[0];
     const ext = file.mimetype.split('/')[1];
-    cb(null, `${name}-${Date.now()}.${ext}`);
+    // will be storing the images in a folder named the users id
+    cb(null, `${req.user._id}/${name}-${Date.now()}.${ext}`);
   }
 });
 
