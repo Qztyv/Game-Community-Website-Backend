@@ -17,9 +17,7 @@ const userSchema = new mongoose.Schema({
     validate: [validator.isEmail, 'Please provide a valid email']
   },
   photo: {
-    type: String,
-    default:
-      'https://game-community-website-s3-bucket.s3.eu-west-2.amazonaws.com/default-user.png'
+    type: String
   },
   role: {
     type: String,
