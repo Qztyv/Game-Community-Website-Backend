@@ -69,14 +69,6 @@ const userSchema = new mongoose.Schema({
   banReason: {
     type: String,
     maxlength: [300, 'A ban reason can be no longer than 300 characters']
-  },
-  following: {
-    type: Number,
-    default: 0
-  },
-  followers: {
-    type: Number,
-    default: 0
   }
 });
 
