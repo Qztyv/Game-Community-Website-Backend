@@ -1,5 +1,5 @@
 {
-  "name": "natours",
+  "name": "gamecommunitywebsitebackend",
   "version": "1.0.0",
   "description": "Attempt to learn mongodb and express",
   "main": "app.js",
