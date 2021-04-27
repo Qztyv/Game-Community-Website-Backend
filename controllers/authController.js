@@ -47,7 +47,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
   // set the url of the button (such as a link to the part of the website
   // which allows you to set a photo, or maybe to make your first post)
-  //const url = `${req.protocol}://${req.get('host')}/settings`;
   const url = `${req.get('origin')}/settings`;
   await new Email(newUser, url).sendWelcome();
   createAndSendToken(newUser, 201, req, res);
@@ -163,7 +162,7 @@ exports.getUserId = catchAsync(async (req, res, next) => {
 // an array of roles/arguments into middleware from the route. known as closure?
 exports.restrictToRoles = (...roles) => {
   return (req, res, next) => {
-    // roles might be ['admin', 'lead-guide']
+    // roles might be ['admin']
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError('You do not have permission to perform this action', 403)
