@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    // Will have different names depending on the website - e.g community would have contributer or moderator
     enum: ['user', 'admin'],
     default: 'user'
   },
