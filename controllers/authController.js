@@ -47,7 +47,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
   // set the url of the button (such as a link to the part of the website
   // which allows you to set a photo, or maybe to make your first post)
-  //const url = `${req.protocol}://${req.get('host')}/settings`;
   const url = `${req.get('origin')}/settings`;
   await new Email(newUser, url).sendWelcome();
   createAndSendToken(newUser, 201, req, res);
