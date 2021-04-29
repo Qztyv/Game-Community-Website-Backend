@@ -49,5 +49,5 @@ process.on('SIGTERM', () => {
   console.log('SIGTERM RECEIVED. Shutting down gracefully...');
   server.close(() => {
     console.log('Process is now terminated by Heroku via SIGTERM signal');
-  })
-})
+  });
+});
